@@ -1,0 +1,1 @@
+Simple TicTacToe implementation with both shared screen and TCP multiplayer capabilities, running in the console
