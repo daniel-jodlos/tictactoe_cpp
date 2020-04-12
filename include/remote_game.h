@@ -33,7 +33,7 @@ template<class LocalPlayer, class RemotePlayer> Game createRemoteGameServer(int 
     return Game(std::move(p1),std::move(p2),board);
 }
 
-template<class LocalPlayer, class RemotePlayer> std::tuple<Game, Board> connectToRemoteGame(std::string addr, int port) {
+template<class LocalPlayer, class RemotePlayer> std::tuple<Game, std::unique_ptr<Board>> connectToRemoteGame(std::string addr, int port) {
     sockpp::tcp_connector conn;
 
     if(!conn.connect(sockpp::inet_address(addr, port))) throw sockpp::ConnectionError();
@@ -43,13 +43,13 @@ template<class LocalPlayer, class RemotePlayer> std::tuple<Game, Board> connectT
 
     std::size_t boardSize;
     conn.read_n(&boardSize, sizeof(std::size_t));
-    Board board(boardSize);
+    auto board = std::make_unique<Board>(boardSize);
 
-    std::unique_ptr<Player> p1 = std::make_unique<LocalPlayer>(order ? X : O, board);
-    std::unique_ptr<Player> p2 = std::make_unique<RemotePlayer>(order ? O : X, board, std::move(conn));
+    std::unique_ptr<Player> p1 = std::make_unique<LocalPlayer>(order ? X : O, *board);
+    std::unique_ptr<Player> p2 = std::make_unique<RemotePlayer>(order ? O : X, *board, std::move(conn));
 
     if(order) std::swap(p1,p2);
-    return std::make_tuple(Game(std::move(p1),std::move(p2),board), std::move(board));
+    return std::make_tuple(Game(std::move(p1),std::move(p2),*board), std::move(board));
 }
 
 #endif //TICTACTOE_REMOTE_GAME_H

@@ -3,7 +3,7 @@ Simple TicTacToe implementation with both shared screen and TCP multi-player cap
 ## Features
 - [x] TCP/IP based multi-player
 - [x] Shared Screen multi-player
-- [ ] Ability to handle any size boards
+- [x] Ability to handle any size boards
   *victory conditions different to those on the 3x3 grid would need to be aditionally defined*
 - [ ] Terminal GUI
 

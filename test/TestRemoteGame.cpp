@@ -32,7 +32,7 @@ TEST_F(RemoteGame, testBoardSizeIsCorrect) {
     ASSERT_NO_THROW(createServer(port,size,true));
     auto [_, board] = connectToRemoteGame<Player, RemotePlayer>("localhost", port);
 
-    ASSERT_EQ(board.size, size);
+    ASSERT_EQ(board->size, size);
 }
 
 TEST_F(RemoteGame, testRemoteOrderIsFlipped) {
