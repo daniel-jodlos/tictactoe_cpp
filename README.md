@@ -1,4 +1,4 @@
-Simple TicTacToe implementation with both shared screen and TCP multi-player capabilities, running in the console. So hopefully it could theoretically run on the universities internal network. So... hopefully, theoretically, it should be able to function over the university network.
+Simple TicTacToe implementation with both shared screen and TCP multi-player capabilities, running in the console. So hopefully it could theoretically run on the universities internal network. So... hopefully, theoretically, it should be able to run over the university network.
 
 ## Features
 - [x] TCP/IP based multi-player
