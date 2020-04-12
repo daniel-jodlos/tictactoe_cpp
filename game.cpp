@@ -4,6 +4,7 @@
 
 #include <game.h>
 #include <iostream>
+#include <map>
 
 Game::Game(std::unique_ptr<Player> p1, std::unique_ptr<Player> p2, Board &board): _board(board), _round(0) {
     _players[0] = std::move(p1);
@@ -18,24 +19,31 @@ void Game::round() {
 }
 
 void printBoard(const Board &board) {
+    static const std::map<Element, char> charMap = {
+            {X, 'X'},
+            {O, 'O'},
+            {Empty, ' '}
+    };
+
     auto printLine = [&board]() {
         for(int i = 0; i < 4*board.size + 1; i++)
             std::cout << "#";
         std::cout << '\n';
     };
 
-    auto printRow = [&board](const auto row) {
+    auto printRow = [&board, printLine](const auto row) {
         std::cout << "#";
 
-        for(std::size_t i = 0; i < board.size; i++)
-            std::cout << ' ' << board[row][i] << " #";
+        for(std::size_t i = 0; i < board.size; i++) {
+            std::cout << ' ' << charMap.at(board[row][i]) << " #";
+            printLine();
+        }
 
         std::cout << "\n";
     };
 
     printLine();
     for(std::size_t row = 0; row < board.size; row++) printRow(row);
-    printLine();
 }
 
 void Game::resolve() {
