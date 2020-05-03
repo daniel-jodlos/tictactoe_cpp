@@ -45,3 +45,20 @@ TEST_F(BoardTests, testWinConditions) {
         ASSERT_EQ(b3.getWinner(), x);
     }
 }
+
+TEST_F(BoardTests, testDraw) {
+    Element drawnBoard[3][3] = {
+            {X, O, X},
+            {O, X, O},
+            {O, X, O}
+    };
+
+    Board b(3);
+
+    for(int x = 0; x < 3; x++)
+        for(int y = 0; y < 3; y++)
+            b.put({x,y}, drawnBoard[x][y]);
+
+    ASSERT_TRUE(b.isFinished());
+    ASSERT_EQ(b.getWinner(), Empty);
+}
