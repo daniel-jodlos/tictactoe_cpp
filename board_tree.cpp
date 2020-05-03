@@ -53,7 +53,7 @@ std::pair<std::size_t, std::size_t> BoardTree::getMove() const {
 }
 
 BoardTree &BoardTree::findChildWithMove(std::pair<std::size_t, std::size_t> move) {
-    if(auto result = std::find_if(children.begin(), children.end(), [&](auto child){return move == child.getMove();}); result != children.end())
+    if(auto result = std::find_if(std::begin(children), std::end(children), [&](BoardTree& child){return move == child.getMove();}); result != std::end(children))
         return *result;
     else
         throw std::out_of_range("Move cannot be made");
