@@ -8,6 +8,7 @@
 
 #include "player.h"
 #include "placeholder.h"
+#include <board_tree.h>
 
 class AIPlayer : public Player {
 protected:
