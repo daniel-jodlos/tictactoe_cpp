@@ -31,6 +31,8 @@ private:
      */
     Element interested_party;
 
+    std::pair<std::size_t, std::size_t> _move;
+
     /**
      * Generates the rest of the tree, unless the game is complete
      */
@@ -40,12 +42,16 @@ public:
     explicit BoardTree(Board &, Element success);
     explicit BoardTree(Board&, std::pair<std::size_t, std::size_t> where, Element success);
 
-    /**
-     * Traverses the tree
-     * @param where
-     * @param what
-     */
-    void put(std::pair<std::size_t, std::size_t> where, Element what) override;
+    BoardTree& findChildWithMove(std::pair<std::size_t, std::size_t> move);
+    std::pair<std::size_t, std::size_t> findBestMove();
+
+    [[nodiscard]] std::pair<std::size_t, std::size_t> getMove() const;
+
+    decltype(children)::const_iterator getChildrenBegin() const { return children.begin(); }
+    decltype(children)::const_iterator getChildrenEnd() const { return children.end(); }
+
+    double getWinPr() { return win_probability; }
+    double getLossPr() { return loss_probability; }
 };
 
 

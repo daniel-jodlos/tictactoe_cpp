@@ -41,6 +41,6 @@ endif()
 
 file(GLOB sources "../test/*.cpp")
 include_directories("../include")
-add_executable(tests ${sources})
+add_executable(tests ${sources} BoardTreeTests.cpp)
 target_link_libraries(tests gtest gtest_main pthread sockpp tictactoelib)
 target_link_libraries(tests tictactoelib sockpp pthread)
