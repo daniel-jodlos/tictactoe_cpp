@@ -54,6 +54,7 @@ void Board::put(std::pair<std::size_t, std::size_t> coords, Element what) {
     else if (_board[coords.first][coords.second] != Empty) throw std::runtime_error("Cannot write to the cell for the second time");
     else {
         _board[coords.first][coords.second] = what;
+        moves++;
     }
 }
 
@@ -65,5 +66,9 @@ Board::Board(std::size_t size): size(size) {
         for (int y = 0; y < size; y++)
             _board[x][y] = Empty;
     }
+}
+
+bool Board::isFinished() const {
+    return moves == size*size || isWon();
 }
 

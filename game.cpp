@@ -22,7 +22,7 @@ void Game::round() {
 
 
 void Game::resolve() {
-    while(!_board.isWon()){
+    while(!_board.isFinished()){
         game_screen::printBoard(_board);
         round();
     }
