@@ -86,7 +86,7 @@ namespace game_screen {
         WINDOW* target = players[(int) from - 1];
         wclear(target);
         echo();
-        
+
         std::size_t x;
         std::size_t y;
 
