@@ -38,12 +38,13 @@ private:
      */
     void _generate();
     std::tuple<std::size_t, std::size_t, std::size_t> count_possibilities();
+
 public:
-    explicit BoardTree(Board &, Element success);
-    explicit BoardTree(Board&, std::pair<std::size_t, std::size_t> where, Element success);
+    explicit BoardTree(const Board &, const Element success);
+    explicit BoardTree(Board&, std::pair<std::size_t, std::size_t> where, const Element success);
 
     BoardTree& findChildWithMove(std::pair<std::size_t, std::size_t> move);
-    std::pair<std::size_t, std::size_t> findBestMove();
+    BoardTree& findBestMove();
 
     [[nodiscard]] std::pair<std::size_t, std::size_t> getMove() const;
 
@@ -52,7 +53,13 @@ public:
 
     double getWinPr() { return win_probability; }
     double getLossPr() { return loss_probability; }
+
+    BoardTree() : Board(0), interested_party(O), win_probability(0), loss_probability(0) {}
 };
 
+//class BoardTreePlaceholder : public BoardTree {
+//public:
+//    BoardTreePlaceholder() = default;
+//};
 
 #endif //TICTACTOE_BOARD_TREE_H

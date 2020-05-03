@@ -7,7 +7,7 @@
 #include <algorithm>
 #include "board_tree.h"
 
-BoardTree::BoardTree(Board & a, Element success) : Board(a), interested_party(success), loss_probability(0), win_probability(0), _move({-1,-1}) {
+BoardTree::BoardTree(const Board & a, Element success) : Board(a), interested_party(success), loss_probability(0), win_probability(0), _move({-1,-1}) {
     _generate();
     auto _ = count_possibilities();
 }
@@ -59,9 +59,9 @@ BoardTree &BoardTree::findChildWithMove(std::pair<std::size_t, std::size_t> move
         throw std::out_of_range("Move cannot be made");
 }
 
-std::pair<std::size_t, std::size_t> BoardTree::findBestMove() {
+BoardTree& BoardTree::findBestMove() {
     auto sortPredicate = [](BoardTree& a, BoardTree& b) {
         return a.win_probability > b.win_probability || (a.win_probability == b.win_probability && a.loss_probability < b.loss_probability);
     };
-    return std::max_element(children.begin(), children.end(), sortPredicate)->getMove();
+    return *std::max_element(children.begin(), children.end(), sortPredicate);
 }

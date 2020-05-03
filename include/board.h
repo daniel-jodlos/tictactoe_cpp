@@ -18,7 +18,7 @@ private:
     std::vector<std::vector<Element>> _board;
 
 public:
-    const std::size_t size;
+    std::size_t size;
     explicit Board(std::size_t);
 
     [[nodiscard]] Element getWinner() const;
