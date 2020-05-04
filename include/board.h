@@ -16,6 +16,7 @@ enum Element {
 class Board {
 private:
     std::vector<std::vector<Element>> _board;
+    std::size_t moves = 0;
 
 public:
     std::size_t size;
@@ -23,6 +24,7 @@ public:
 
     [[nodiscard]] Element getWinner() const;
     [[nodiscard]] bool isWon() const;
+    [[nodiscard]] bool isFinished() const;
 
     virtual void put(std::pair<std::size_t, std::size_t> coords, Element what);
 

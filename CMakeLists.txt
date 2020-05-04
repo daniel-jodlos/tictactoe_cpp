@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories("./include")
 find_library(SOCKPP_LIB sockpp)
 
+<<<<<<< HEAD
 add_library(tictactoelib board.cpp include/board.h player.cpp include/player.h game.cpp include/game.h include/remote_player.h remote_player.cpp include/remote_game.h game_screen.cpp game_screen.h ai_player.cpp include/ai_player.h board_tree.cpp include/board_tree.h)
 target_link_libraries(tictactoelib ${SOCKPP_LIB} ncurses)
 add_executable(tictactoe main.cpp board.cpp include/board.h player.cpp include/player.h game.cpp include/game.h include/remote_player.h remote_player.cpp include/remote_game.h game_screen.cpp game_screen.h ai_player.cpp include/ai_player.h board_tree.cpp include/board_tree.h include/placeholder.h)
