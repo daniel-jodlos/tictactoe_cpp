@@ -21,5 +21,6 @@ std::pair<std::size_t, std::size_t> AIPlayer::playOn() {
 }
 
 void AIPlayer::onOpponentMove(std::pair<std::size_t, std::size_t> pair, Element element) {
-    if(turn >= 2) tree = tree.findChildWithMove(pair);
+    if(turn >= 2)
+        tree = tree.findChildWithMove(pair);
 }

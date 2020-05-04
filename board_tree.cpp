@@ -5,6 +5,7 @@
 #include <tuple>
 #include <numeric>
 #include <algorithm>
+#include <sstream>
 #include "board_tree.h"
 
 BoardTree::BoardTree(const Board & a, Element success) : Board(a), interested_party(success), loss_probability(0), win_probability(0), _move({-1,-1}) {
@@ -15,7 +16,7 @@ BoardTree::BoardTree(const Board & a, Element success) : Board(a), interested_pa
 BoardTree::BoardTree(Board & b, std::pair<std::size_t, std::size_t> where, Element success): Board(b), interested_party(success), loss_probability(0), win_probability(0), _move(where) {
     Board::put(where, success);
     _generate();
-    count_possibilities();
+    auto _ = count_possibilities();
 }
 
 void BoardTree::_generate() {
@@ -55,8 +56,10 @@ std::pair<std::size_t, std::size_t> BoardTree::getMove() const {
 BoardTree &BoardTree::findChildWithMove(std::pair<std::size_t, std::size_t> move) {
     if(auto result = std::find_if(std::begin(children), std::end(children), [&](BoardTree& child){return move == child.getMove();}); result != std::end(children))
         return *result;
-    else
-        throw std::out_of_range("Move cannot be made");
+    else {
+        std::stringstream s; s << "Move to " << move.first << "," << move.second << " cannot be made";
+        throw std::out_of_range(s.str());
+    }
 }
 
 BoardTree& BoardTree::findBestMove() {

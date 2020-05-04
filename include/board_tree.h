@@ -40,8 +40,8 @@ private:
     std::tuple<std::size_t, std::size_t, std::size_t> count_possibilities();
 
 public:
-    explicit BoardTree(const Board &, const Element success);
-    explicit BoardTree(Board&, std::pair<std::size_t, std::size_t> where, const Element success);
+    explicit BoardTree(const Board &, Element success);
+    explicit BoardTree(Board&, std::pair<std::size_t, std::size_t> where, Element success);
 
     BoardTree& findChildWithMove(std::pair<std::size_t, std::size_t> move);
     BoardTree& findBestMove();
