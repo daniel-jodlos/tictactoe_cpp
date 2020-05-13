@@ -18,7 +18,11 @@ void Game::round() {
             _players[(_round+1)%2]->onOpponentMove(move, _players[_round % 2]->getPlaysWith());
             break;
         } catch (std::out_of_range&) {
-            game_screen::talk_to(_players[_round % 2]->getPlaysWith(), "Incorrect");
+            game_screen::talk_to(_players[_round % 2]->getPlaysWith(), "Out of range");
+            getch();
+            continue;
+        } catch (std::runtime_error&) {
+            game_screen::talk_to(_players[_round % 2]->getPlaysWith(), "Taken");
             getch();
             continue;
         }
