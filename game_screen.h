@@ -7,6 +7,7 @@
 
 #include <ncurses.h>
 #include <board.h>
+#include <string>
 
 namespace game_screen {
 
@@ -14,6 +15,7 @@ namespace game_screen {
     void cleanup();
 
     void printBoard(const Board& board);
+    void talk_to(int player, const std::string& msg);
     std::pair<std::size_t, std::size_t> getInput(Element from);
 }
 

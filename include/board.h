@@ -19,15 +19,14 @@ private:
     std::size_t moves = 0;
 
 public:
-    const std::size_t size;
-
-    Board(std::size_t);
+    std::size_t size;
+    explicit Board(std::size_t);
 
     [[nodiscard]] Element getWinner() const;
     [[nodiscard]] bool isWon() const;
     [[nodiscard]] bool isFinished() const;
 
-    void put(std::pair<std::size_t, std::size_t> coords, Element what);
+    virtual void put(std::pair<std::size_t, std::size_t> coords, Element what);
 
     std::vector<Element>::const_iterator operator[](std::size_t) const;
 };
