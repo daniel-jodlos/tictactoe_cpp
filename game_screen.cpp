@@ -26,6 +26,7 @@ namespace game_screen {
         delwin(t);
 
         players[i-1] = newwin(1, playerW-5,y+2,x+2);
+        wclear(players[i-1]);
         wrefresh(players[i-1]);
         refresh();
     }
@@ -37,14 +38,19 @@ namespace game_screen {
 
         const int height = 2*size + 1;
         const int width = 4*size + 1;
-        boardWindow = newwin(height, width, 5, 10);
+        const int top_margin = 5;
+        const int s_height = getmaxy(stdscr);
+        const int s_width = getmaxx(stdscr);
+        boardWindow = newwin(height, width, top_margin, (s_width - width)/2);
         refresh();
         box(boardWindow,0,0);
         wrefresh(boardWindow);
 
-        setupWindow(1, 6, 15 + width);
-        setupWindow(2, 15, 15 + width);
+        const int player_window_y = 2*top_margin + height;
+        setupWindow(1, player_window_y, (s_width-2*playerW)/3);
+        setupWindow(2, player_window_y, 2*((s_width-2*playerW)/3) + playerW);
 
+        // Print empty board
         Board randomBoard(size);
         printBoard(randomBoard);
     }
@@ -74,10 +80,8 @@ namespace game_screen {
                 wprintw(boardWindow, "---");
             }
 
-//            printLine();
         };
 
-//        printLine();
         for(std::size_t row = 0; row < board.size; row++) printRow(row);
         wrefresh(boardWindow);
     }
@@ -90,7 +94,7 @@ namespace game_screen {
         std::size_t x;
         std::size_t y;
 
-        wscanw(target, "%ld %ld\n",&x,&y);
+        wscanw(target, "%ld,%ld\n",&x,&y);
 
         noecho();
         wclear(target);
@@ -100,5 +104,12 @@ namespace game_screen {
 
     void cleanup() {
         endwin();
+    }
+
+    void talk_to(const int player, const std::string& msg) {
+        WINDOW * target = players[player-1];
+        wclear(target);
+        wprintw(target, msg.c_str());
+        wrefresh(target);
     }
 }
