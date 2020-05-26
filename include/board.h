@@ -18,6 +18,10 @@ private:
     std::vector<std::vector<Element>> _board;
     std::size_t moves = 0;
 
+    Element getVerticalWinner() const;
+    Element getHorizontalWinner() const;
+    Element getDiagonalWinner() const;
+
 public:
     std::size_t size;
     explicit Board(std::size_t);

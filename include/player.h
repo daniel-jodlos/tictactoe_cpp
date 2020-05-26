@@ -29,7 +29,7 @@ public:
 
     virtual void onOpponentMove(std::pair<std::size_t, std::size_t>, Element){};
 
-    virtual void onFinish(bool result) const;
+    virtual void onFinish(Element result) const;
 
 };
 

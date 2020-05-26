@@ -15,10 +15,6 @@ private:
 public:
     RemotePlayer(Element playsWith, const Board& on, sockpp::stream_socket socket);
 
-    void onFinish(bool result) const override {
-        // Actually do nothing onFinish - no point
-    }
-
     /**
      * Receives move of the remote opponent
      * @return Move of the remote opponent

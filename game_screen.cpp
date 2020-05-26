@@ -1,15 +1,15 @@
 //
-// Created by danielj on 13.04.2020.
+// Created by Daniel Jodłoś on 13.04.2020.
 //
 
 #include "game_screen.h"
 #include <ncurses.h>
 #include <map>
-#include <sstream>
+#include <fstream>
+#include <set>
 
 WINDOW *boardWindow;
 WINDOW *players[2];
-int i = -1;
 const int playerH = 5;
 const int playerW = 30;
 
@@ -17,7 +17,7 @@ using namespace game_screen;
 
 namespace game_screen {
 
-    void setupWindow(int i, int y, int x) {
+    void setupPlayerWindow(int i, int y, int x) {
         WINDOW* t = newwin(playerH,playerW,y,x);
         box(t, 0, 0);
         wmove(t, 0, (playerW-10)/2);
@@ -36,10 +36,11 @@ namespace game_screen {
         cbreak(); // Terminate on CTRL-C
         noecho(); // Do not print user's input by default
 
+        print_instructions();
+
         const int height = 2*size + 1;
         const int width = 4*size + 1;
         const int top_margin = 5;
-        const int s_height = getmaxy(stdscr);
         const int s_width = getmaxx(stdscr);
         boardWindow = newwin(height, width, top_margin, (s_width - width)/2);
         refresh();
@@ -47,8 +48,8 @@ namespace game_screen {
         wrefresh(boardWindow);
 
         const int player_window_y = 2*top_margin + height;
-        setupWindow(1, player_window_y, (s_width-2*playerW)/3);
-        setupWindow(2, player_window_y, 2*((s_width-2*playerW)/3) + playerW);
+        setupPlayerWindow(1, player_window_y, (s_width - 2 * playerW) / 3);
+        setupPlayerWindow(2, player_window_y, 2 * ((s_width - 2 * playerW) / 3) + playerW);
 
         // Print empty board
         Board randomBoard(size);
@@ -70,7 +71,6 @@ namespace game_screen {
                 char element[2] = {charMap.at(board[row][i])};
                 wprintw(boardWindow, " %s ", &element);
                 if(i != board.size-1) wprintw(boardWindow, "|");
-                //std::cout << ' ' << charMap.at(board[row][i]) << " #";
             }
 
             if(row != board.size-1) {
@@ -79,7 +79,6 @@ namespace game_screen {
                     wprintw(boardWindow, "---+");
                 wprintw(boardWindow, "---");
             }
-
         };
 
         for(std::size_t row = 0; row < board.size; row++) printRow(row);
@@ -106,10 +105,75 @@ namespace game_screen {
         endwin();
     }
 
-    void talk_to(const int player, const std::string& msg) {
+    void talk_to_player(const int player, const std::string& msg) {
         WINDOW * target = players[player-1];
         wclear(target);
         wprintw(target, msg.c_str());
         wrefresh(target);
+    }
+
+    WINDOW* prepare_titled_window(WINDOW* target, const std::string title) {
+        box(target, 0, 0);
+        const int width = getmaxx(target);
+
+        wmove(target, 0, (width - title.size())/2);
+        wprintw(target, title.c_str());
+        wrefresh(target);
+        refresh();
+
+        return nullptr;
+    }
+
+    std::vector<std::string> read_to_lines(std::ifstream& file, std::size_t maxline_length = std::numeric_limits<std::size_t>::infinity()) {
+        std::vector<std::string> contents;
+        std::string buffer;
+
+        while(!file.eof()) {
+            std::getline(file, buffer);
+
+            while(buffer.size() > maxline_length) {
+                std::string part = buffer.substr(0, maxline_length);
+                buffer = buffer.substr(maxline_length);
+                contents.push_back(part);
+            }
+
+            contents.push_back(buffer);
+        }
+
+        return std::move(contents);
+    }
+
+    void print_instructions() {
+        const char* instructions_file = "resources/instruction.txt";
+        std::ifstream file;
+        file.open(instructions_file);
+
+        if(!file.is_open()) {
+            throw std::runtime_error("Failed to open file " + std::string(instructions_file));
+        }
+
+        clear();
+        int scrwidth = getmaxx(stdscr);
+        int scrheight = getmaxy(stdscr);
+        const int x_margin = scrwidth / 10; // 10%
+        const int y_margin = scrheight / 10; // 10%
+        const int win_width = scrwidth - 2*x_margin;
+
+        std::vector<std::string> contents = read_to_lines(file, win_width - 4);
+
+        WINDOW* instructions = newwin(contents.size()+2, win_width, y_margin, x_margin);
+        refresh();
+        prepare_titled_window(instructions, " Instrukcja ");
+
+        for(int line = 1; line <= contents.size(); line++) {
+            wmove(instructions, line, 2);
+            wprintw(instructions, contents[line-1].c_str());
+        }
+        wrefresh(instructions);
+
+        getch();
+        wclear(instructions);
+        delwin(instructions);
+        clear();
     }
 }

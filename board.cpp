@@ -6,17 +6,7 @@
 #include <stdexcept>
 #include "include/board.h"
 
-Element Board::getWinner() const {
-    // row win
-    for(std::size_t row = 0; row < size; row++) {
-        Element t = _board[row][0];
-        for (std::size_t col = 1; col < size && t != Empty; col++) {
-            if (t != _board[row][col])
-                t = Empty;
-        }
-        if(t != Empty) return t;
-    }
-
+Element Board::getVerticalWinner() const {
     for(std::size_t col = 0; col < size; col++) {
         Element t = _board[0][col];
         for (std::size_t row = 1; row < size && t != Empty; row++) {
@@ -26,6 +16,23 @@ Element Board::getWinner() const {
         if(t != Empty) return t;
     }
 
+    return Empty;
+}
+
+Element Board::getHorizontalWinner() const {
+    for(std::size_t row = 0; row < size; row++) {
+        Element t = _board[row][0];
+        for (std::size_t col = 1; col < size && t != Empty; col++) {
+            if (t != _board[row][col])
+                t = Empty;
+        }
+        if(t != Empty) return t;
+    }
+
+    return Empty;
+}
+
+Element Board::getDiagonalWinner() const {
     Element t = _board[0][0];
     for(std::size_t i = 1; i < size && t != Empty; i++) {
         if(t != _board[i][i]) t = Empty;
@@ -38,6 +45,16 @@ Element Board::getWinner() const {
         if(t != _board[i][size-1-i]) t = Empty;
 
     return t;
+}
+
+Element Board::getWinner() const {
+    Element winner = getVerticalWinner();
+    #define conditional_call(function) if(winner != Empty) return winner; else winner = function()
+
+    conditional_call(getHorizontalWinner);
+    conditional_call(getDiagonalWinner);
+
+    return winner;
 }
 
 bool Board::isWon() const {

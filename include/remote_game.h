@@ -1,5 +1,5 @@
 //
-// Created by danielj on 11.04.2020.
+// Created by Daniel Jodłoś on 11.04.2020.
 //
 
 #ifndef TICTACTOE_REMOTE_GAME_H
@@ -12,10 +12,10 @@
 #include <sockpp/tcp_connector.h>
 
 namespace sockpp {
-class ConnectionError : public std::runtime_error {
-public:
-    ConnectionError(): std::runtime_error("Failed to connect to server") {}
-};
+    class ConnectionError : public std::runtime_error {
+    public:
+        ConnectionError(): std::runtime_error("Failed to connect to server") {}
+    };
 }
 
 template<class LocalPlayer, class RemotePlayer> Game createRemoteGameServer(int port, bool order, Board& board) {

@@ -18,11 +18,11 @@ void Game::round() {
             _players[(_round+1)%2]->onOpponentMove(move, _players[_round % 2]->getPlaysWith());
             break;
         } catch (std::out_of_range&) {
-            game_screen::talk_to(_players[_round % 2]->getPlaysWith(), "Out of range");
+            game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(), "Out of range");
             getch();
             continue;
         } catch (std::runtime_error&) {
-            game_screen::talk_to(_players[_round % 2]->getPlaysWith(), "Taken");
+            game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(), "Taken");
             getch();
             continue;
         }
@@ -41,7 +41,7 @@ void Game::resolve() {
     game_screen::printBoard(_board);
     const Element winner = _board.getWinner();
     for(const auto& player : _players)
-        player->onFinish(player->getPlaysWith() == winner);
+        player->onFinish(winner);
 }
 
 Player *Game::getPlayer(int i) {

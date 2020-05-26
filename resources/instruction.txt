@@ -1,0 +1,7 @@
+First one to fill any of the rows, columns or diagonals wins.
+Move is being made using the keyboard with correct input format being y,x
+
+Vertical axis Y starts in top left corner and is points down.
+Vertical axis Y starts in top left corner and is points down.
+
+In order to exit, use CTRL-C

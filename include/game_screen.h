@@ -10,12 +10,12 @@
 #include <string>
 
 namespace game_screen {
-
     void init(int size);
     void cleanup();
 
     void printBoard(const Board& board);
-    void talk_to(int player, const std::string& msg);
+    void talk_to_player(int player, const std::string& msg);
+    void print_instructions();
     std::pair<std::size_t, std::size_t> getInput(Element from);
 }
 
