@@ -2,49 +2,61 @@
 // Created by Daniel Jodłoś on 10.04.2020.
 //
 
-#include <game.h>
 #include "game_screen.h"
+#include <game.h>
 #include <stdexcept>
 
-Game::Game(std::unique_ptr<Player> p1, std::unique_ptr<Player> p2, Board &board): _board(board), _round(0) {
-    _players[0] = std::move(p1);
-    _players[1] = std::move(p2);
+Game::Game(Player *p1, Player *p2, Board &board) : _board(board), _round(0) {
+  _players[0] = p1;
+  _players[1] = p2;
+}
+
+Game::~Game() {
+  delete _players[0];
+  delete _players[1];
 }
 
 void Game::round() {
-    while (true) {
-        try {
-            const auto move = _players[_round % 2]->playOn();
-            _board.put(move, _players[_round % 2]->getPlaysWith());
-            _players[(_round+1)%2]->onOpponentMove(move, _players[_round % 2]->getPlaysWith());
-            break;
-        } catch (std::out_of_range&) {
-            game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(), "Out of range");
-            getch();
-            continue;
-        } catch (std::runtime_error&) {
-            game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(), "Taken");
-            getch();
-            continue;
-        }
+  while (true) {
+    try {
+      const auto move = _players[_round % 2]->playOn();
+      _board.put(move, _players[_round % 2]->getPlaysWith());
+      _players[(_round + 1) % 2]->onOpponentMove(
+          move, _players[_round % 2]->getPlaysWith());
+      break;
+    } catch (std::out_of_range &) {
+      game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(),
+                                  "Out of range");
+      getch();
+      continue;
+    } catch (std::runtime_error &) {
+      game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(),
+                                  "Taken");
+      getch();
+      continue;
     }
-    _round++;
+  }
+  _round++;
 }
 
+void Game::setHasFrontend(bool n) noexcept { this->has_frontend = n; }
 
+void Game::printBoard() {
+  if (this->has_frontend) {
+    game_screen::printBoard(_board);
+  }
+}
 
 void Game::resolve() {
-    while(!_board.isFinished()){
-        game_screen::printBoard(_board);
-        round();
-    }
+  while (!_board.isFinished()) {
+    printBoard();
+    round();
+  }
 
-    game_screen::printBoard(_board);
-    const Element winner = _board.getWinner();
-    for(const auto& player : _players)
-        player->onFinish(winner);
+  printBoard();
+  const Element winner = _board.getWinner();
+  for (const auto &player : _players)
+    player->onFinish(winner);
 }
 
-Player *Game::getPlayer(int i) {
-    return _players[i].get();
-}
+Player *Game::getPlayer(int i) { return _players[i]; }

@@ -6,14 +6,15 @@ include_directories("./include")
 find_library(SOCKPP_LIB sockpp)
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-file(GLOB sources "src/*.cpp")
-file(GLOB includes "include/*.h")
+file(GLOB sources "src/*.cpp" "src/**/*.cpp")
+file(GLOB includes "include/*.h" "include/**/*.h")
+
 
 add_library(tictactoelib ${sources} ${includes})
-target_link_libraries(tictactoelib ${SOCKPP_LIB} ncurses)
+target_link_libraries(tictactoelib ${SOCKPP_LIB} ncurses pthread)
 
 add_executable(tictactoe main.cpp)
-target_link_libraries(tictactoe ${SOCKPP_LIB} ncurses tictactoelib)
+target_link_libraries(tictactoe ${SOCKPP_LIB}  tictactoelib)
 add_subdirectory(test)
 
 enable_testing()

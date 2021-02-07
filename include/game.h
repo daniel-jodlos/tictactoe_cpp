@@ -5,32 +5,35 @@
 #ifndef TICTACTOE_GAME_H
 #define TICTACTOE_GAME_H
 
-
 #include <memory>
+
 #include "player.h"
 
 class Game {
 protected:
-    constexpr const static Element elements[2] = {X, O};
+  constexpr const static Element elements[2] = {X, O};
 
-    std::unique_ptr<Player> _players[2];
-    Board& _board;
-    std::size_t _round;
+  Player *_players[2];
+  Board &_board;
+  std::size_t _round;
+  bool has_frontend = true;
+
+  void printBoard();
 
 public:
-    Game(std::unique_ptr<Player> p1, std::unique_ptr<Player> p2, Board& board);
-    template<class A, class B> static Game create(Board&);
+  Game(Player *p1, Player *p2, Board &board);
+  ~Game();
+  template <class A, class B> static Game create(Board &);
 
-    void round();
-    void resolve();
+  void round();
+  void resolve();
+  void setHasFrontend(bool) noexcept;
 
-    Player* getPlayer(int);
+  Player *getPlayer(int);
 };
 
-template<class A, class B>
-Game Game::create(Board& board) {
-    return Game(std::make_unique<A>(elements[0], board), std::make_unique<B>(elements[1], board), board);
+template <class A, class B> Game Game::create(Board &board) {
+  return Game(new A(elements[0], board), new B(elements[1], board), board);
 }
 
-
-#endif //TICTACTOE_GAME_H
+#endif // TICTACTOE_GAME_H

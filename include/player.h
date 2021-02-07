@@ -5,33 +5,32 @@
 #ifndef TICTACTOE_PLAYER_H
 #define TICTACTOE_PLAYER_H
 
-
 #include "board.h"
+#include <string>
 
 class Player {
 private:
-
-
 protected:
-    const Element _playsWith;
-    const Board& _onBoard;
+  const Element _playsWith;
+  const Board &_onBoard;
 
 public:
-    Player(Element, const Board&);
+  Player(Element, const Board &);
 
-    [[nodiscard]] Element getPlaysWith() const;
+  [[nodiscard]] Element getPlaysWith() const;
 
-    /**
-     * Makes a decision where to put it's element
-     * @return std::pair<std::size_t, std::size_t> - Coordinates where element will be put
-     */
-    virtual std::pair<std::size_t, std::size_t> playOn();
+  /**
+   * Makes a decision where to put it's element
+   * @return std::pair<std::size_t, std::size_t> - Coordinates where element
+   * will be put
+   */
+  virtual std::pair<std::size_t, std::size_t> playOn();
 
-    virtual void onOpponentMove(std::pair<std::size_t, std::size_t>, Element){};
+  virtual void onOpponentMove(std::pair<std::size_t, std::size_t>, Element){};
 
-    virtual void onFinish(Element result) const;
+  virtual void onFinish(Element result) const;
 
+  virtual void onError(std::string error) const noexcept;
 };
 
-
-#endif //TICTACTOE_PLAYER_H
+#endif // TICTACTOE_PLAYER_H
