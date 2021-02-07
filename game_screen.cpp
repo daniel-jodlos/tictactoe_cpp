@@ -7,6 +7,7 @@
 #include <map>
 #include <fstream>
 #include <set>
+#include <limits>
 
 WINDOW *boardWindow;
 WINDOW *players[2];

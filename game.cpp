@@ -4,6 +4,7 @@
 
 #include <game.h>
 #include "game_screen.h"
+#include <stdexcept>
 
 Game::Game(std::unique_ptr<Player> p1, std::unique_ptr<Player> p2, Board &board): _board(board), _round(0) {
     _players[0] = std::move(p1);
