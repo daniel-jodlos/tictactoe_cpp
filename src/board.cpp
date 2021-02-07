@@ -4,7 +4,7 @@
 
 #include <cstddef>
 #include <stdexcept>
-#include "include/board.h"
+#include <board.h>
 
 Element Board::getVerticalWinner() const {
     for(std::size_t col = 0; col < size; col++) {

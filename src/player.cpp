@@ -2,8 +2,8 @@
 // Created by Daniel Jodłoś on 10.04.2020.
 //
 
-#include "include/player.h"
-#include "game_screen.h"
+#include <player.h>
+#include <game_screen.h>
 
 Player::Player(const Element e, const Board& b): _playsWith(e), _onBoard(b) {}
 

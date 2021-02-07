@@ -6,11 +6,14 @@ include_directories("./include")
 find_library(SOCKPP_LIB sockpp)
 
 file(COPY resources DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(GLOB sources "src/*.cpp")
+file(GLOB includes "include/*.h")
 
-add_library(tictactoelib board.cpp include/board.h player.cpp include/player.h game.cpp include/game.h include/remote_player.h remote_player.cpp include/remote_game.h game_screen.cpp include/game_screen.h ai_player.cpp include/ai_player.h board_tree.cpp include/board_tree.h)
+add_library(tictactoelib ${sources} ${includes})
 target_link_libraries(tictactoelib ${SOCKPP_LIB} ncurses)
-add_executable(tictactoe main.cpp board.cpp include/board.h player.cpp include/player.h game.cpp include/game.h include/remote_player.h remote_player.cpp include/remote_game.h game_screen.cpp include/game_screen.h ai_player.cpp include/ai_player.h board_tree.cpp include/board_tree.h include/placeholder.h)
-target_link_libraries(tictactoe ${SOCKPP_LIB} ncurses)
+
+add_executable(tictactoe main.cpp)
+target_link_libraries(tictactoe ${SOCKPP_LIB} ncurses tictactoelib)
 add_subdirectory(test)
 
 enable_testing()
