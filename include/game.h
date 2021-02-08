@@ -29,6 +29,8 @@ public:
   void resolve();
   void setHasFrontend(bool) noexcept;
 
+  std::size_t getRoundNumber() noexcept;
+
   Player *getPlayer(int);
 };
 

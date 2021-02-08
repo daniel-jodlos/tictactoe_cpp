@@ -39,6 +39,8 @@ void Game::round() {
   _round++;
 }
 
+std::size_t Game::getRoundNumber() noexcept { return _round; }
+
 void Game::setHasFrontend(bool n) noexcept { this->has_frontend = n; }
 
 void Game::printBoard() {

@@ -9,8 +9,7 @@
 struct WebsocketClient {
   char identifier;
   websocketpp::connection_hdl hdl;
-  Game *game;
-  Element _elem;
+  std::shared_ptr<Game> game;
 };
 
 typedef WebsocketClient WebsocketPoolElement;
