@@ -41,7 +41,9 @@ void create_game(char playerA, char playerB, server *s) {
     std::shared_ptr<Game> g = createWebsocketGameObject(s, hdlA, hdlB, b);
     g->setHasFrontend(false);
     pool[playerA].game = g;
+    pool[playerA].playsWith = playerB;
     pool[playerB].game = g;
+    pool[playerB].playsWith = playerA;
     g->resolve();
   });
   t.detach();
@@ -61,10 +63,11 @@ void on_play_on(server *s, websocketpp::connection_hdl hdl,
       ->sendMove({x, y});
 }
 
-void end_game(server *s, char idA, char idB) {
-  auto element = pool[idB];
+void end_game(server *s, char idA) {
+  WebsocketPoolElement element = pool[idA];
+  char idB = element.playsWith;
   auto hdl = element.hdl;
-  s->send(hdl, idB + ";game_ended;", websocketpp::frame::opcode::CLOSE);
+  s->send(hdl, idA + ";game_ended;", websocketpp::frame::opcode::CLOSE);
   pool.erase(idA);
   pool.erase(idB);
 }
