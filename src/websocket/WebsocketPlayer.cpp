@@ -6,6 +6,8 @@ WebsocketPlayer::WebsocketPlayer(
     : Player(e, b), server(s), hdl(h) {}
 
 std::pair<std::size_t, std::size_t> WebsocketPlayer::playOn() {
+  server->send(hdl, "0;your_turn;" + getPlaysWith(),
+               websocketpp::frame::opcode::CONTINUATION);
   std::size_t x, y;
   _buffer >> x >> y;
   return {x, y};

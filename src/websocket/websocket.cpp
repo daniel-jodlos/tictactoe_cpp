@@ -50,6 +50,8 @@ createWebsocketGameObject(websocketpp::server<websocketpp::config::asio> *s,
 }
 
 void create_game(Identifier playerA, Identifier playerB, server *s) {
+  s->send(pool[playerA].hdl, playerB + ";play_with;",
+          websocketpp::frame::opcode::CONTINUATION);
   std::thread t([&]() {
     websocketpp::connection_hdl hdlA = pool[playerA].hdl;
     websocketpp::connection_hdl hdlB = pool[playerB].hdl;
