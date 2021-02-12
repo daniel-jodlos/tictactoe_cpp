@@ -1,4 +1,5 @@
 #include <iostream>
+#include <regex>
 #include <thread>
 #include <websocket/WebsocketPlayer.h>
 #include <websocket/typedefs.h>
@@ -12,13 +13,28 @@ typedef websocketpp::server<websocketpp::config::asio> server;
 using websocketpp::lib::bind;
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
-char id = 'a';
 
-std::tuple<char, std::string, std::string> parse(std::string payload) {
-  char id = 0;
-  char query[20];
-  char params[30];
-  std::sscanf(payload.c_str(), "%c;%s;%s", &id, &query, &params);
+unsigned int counter = 0;
+
+std::string getID() {
+  std::srand(counter++);
+  const size_t len = 10;
+  std::string result = "";
+  for (size_t i = 0; i < len; i++) {
+    result += 97 + std::rand() % (123 - 97);
+  }
+
+  return std::move(result);
+}
+
+std::tuple<std::string, std::string, std::string> parse(std::string payload) {
+  static const std::regex regex("([^;]*);([^;]*);(.*)", std::regex::ECMAScript);
+  std::smatch m;
+  std::regex_match(payload, m, regex);
+  std::string id = m[1].str();
+  std::string query = m[2].str();
+  std::string params = m[3].str();
+
   return {id, std::string(query), std::string(params)};
 }
 
@@ -33,7 +49,7 @@ createWebsocketGameObject(websocketpp::server<websocketpp::config::asio> *s,
       (Player *)new WebsocketPlayer(s, hdlB, elems[(start + 1) % 2], b), b);
 }
 
-void create_game(char playerA, char playerB, server *s) {
+void create_game(Identifier playerA, Identifier playerB, server *s) {
   std::thread t([&]() {
     websocketpp::connection_hdl hdlA = pool[playerA].hdl;
     websocketpp::connection_hdl hdlB = pool[playerB].hdl;
@@ -52,8 +68,7 @@ void create_game(char playerA, char playerB, server *s) {
 void on_play_on(server *s, websocketpp::connection_hdl hdl,
                 server::message_ptr msg) {
   std::string payload = msg->get_payload();
-  char identifier;
-  std::string query, params;
+  std::string query, params, identifier;
   std::tie(identifier, query, params) = parse(payload);
   const WebsocketPoolElement elem = pool[identifier];
   unsigned int x, y;
@@ -63,9 +78,9 @@ void on_play_on(server *s, websocketpp::connection_hdl hdl,
       ->sendMove({x, y});
 }
 
-void end_game(server *s, char idA) {
+void end_game(server *s, Identifier idA) {
   WebsocketPoolElement element = pool[idA];
-  char idB = element.playsWith;
+  Identifier idB = element.playsWith;
   auto hdl = element.hdl;
   s->send(hdl, idA + ";game_ended;", websocketpp::frame::opcode::CLOSE);
   pool.erase(idA);
@@ -75,22 +90,26 @@ void end_game(server *s, char idA) {
 void on_message(server *s, websocketpp::connection_hdl hdl,
                 server::message_ptr msg) {
   std::string payload = msg->get_payload();
-  char identifier;
-  std::string query, params;
+  std::clog << payload << '\n';
+  std::string query, params, identifier;
   std::tie(identifier, query, params) = parse(payload);
 
   if (payload == "requests_id") {
-    char response[] = {id++, 0};
+    const auto id = getID();
+    std::string response = id + ";id;";
+    std::clog << "Sent " << response << '\n';
     s->send(hdl, response, msg->get_opcode());
-    pool.insert({identifier, {identifier, hdl, std::shared_ptr<Game>()}});
+    pool.insert({id, {id, hdl, std::shared_ptr<Game>()}});
   } else if (query == "disconnect") {
     pool.erase(identifier);
   } else if (query == "play_with") {
-    create_game(params[0], identifier, s);
+    create_game(params, identifier, s);
   } else if (query == "play_on") {
     on_play_on(s, hdl, msg);
   } else if (query == "game_ended") {
     end_game(s, identifier);
+  } else {
+    std::clog << "No idea what to do with query " << query << '\n';
   }
 }
 

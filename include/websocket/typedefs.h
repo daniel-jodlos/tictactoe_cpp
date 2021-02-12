@@ -6,15 +6,17 @@
 #include <memory>
 #include <websocketpp/server.hpp>
 
+typedef std::string Identifier;
+
 struct WebsocketClient {
-  char identifier;
+  Identifier identifier;
   websocketpp::connection_hdl hdl;
   std::shared_ptr<Game> game;
-  char playsWith;
+  Identifier playsWith;
 };
 
 typedef WebsocketClient WebsocketPoolElement;
-typedef std::map<char, WebsocketPoolElement> WebsocketPool;
+typedef std::map<Identifier, WebsocketPoolElement> WebsocketPool;
 
 extern WebsocketPool pool;
 
