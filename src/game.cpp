@@ -4,6 +4,7 @@
 
 #include "game_screen.h"
 #include <game.h>
+#include <iostream>
 #include <stdexcept>
 
 Game::Game(Player *p1, Player *p2, Board &board) : _board(board), _round(0) {
@@ -23,16 +24,25 @@ void Game::round() {
       _board.put(move, _players[_round % 2]->getPlaysWith());
       _players[(_round + 1) % 2]->onOpponentMove(
           move, _players[_round % 2]->getPlaysWith());
+      std::clog << "On opponent move invoked\n";
       break;
     } catch (std::out_of_range &) {
-      game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(),
-                                  "Out of range");
-      getch();
+      if (has_frontend) {
+        game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(),
+                                    "Out of range");
+        getch();
+      } else {
+        std::cerr << "Out of range occured\n";
+      }
       continue;
     } catch (std::runtime_error &) {
-      game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(),
-                                  "Taken");
-      getch();
+      if (has_frontend) {
+        game_screen::talk_to_player(_players[_round % 2]->getPlaysWith(),
+                                    "Taken");
+        getch();
+      } else {
+        std::clog << "Taken occured\n";
+      }
       continue;
     }
   }

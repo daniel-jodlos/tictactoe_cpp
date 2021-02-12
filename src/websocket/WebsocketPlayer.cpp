@@ -9,8 +9,7 @@ WebsocketPlayer::WebsocketPlayer(
 }
 
 std::pair<std::size_t, std::size_t> WebsocketPlayer::playOn() {
-  server->send(hdl, "0;your_turn;" + getPlaysWith(),
-               websocketpp::frame::opcode::text);
+  server->send(hdl, "your_turn", websocketpp::frame::opcode::text);
   return _queue.pop();
 }
 
@@ -18,7 +17,7 @@ void WebsocketPlayer::onOpponentMove(std::pair<std::size_t, std::size_t> move,
                                      Element element) {
   std::stringstream s;
   s << this->id << ";played;" << move.first << "," << move.second;
-  server->send(hdl, s.str().c_str(), websocketpp::frame::opcode::text);
+  server->send(hdl, s.str(), websocketpp::frame::opcode::text);
 }
 
 void WebsocketPlayer::sendMove(std::pair<std::size_t, std::size_t> a) noexcept {

@@ -84,8 +84,13 @@ void on_play_on(server *s, websocketpp::connection_hdl hdl,
   std::string query, params, identifier;
   std::tie(identifier, query, params) = parse(payload);
   const WebsocketPoolElement elem = pool[identifier];
-  unsigned int x, y;
-  std::sscanf(params.c_str(), "%ud,%ud", &x, &y);
+  std::size_t x, y;
+  std::stringstream ss;
+  char useless;
+  ss << params;
+  ss >> x;
+  ss >> useless;
+  ss >> y;
 
   ((WebsocketPlayer *)elem.game->getPlayer(elem.game->getRoundNumber()))
       ->sendMove({x, y});
