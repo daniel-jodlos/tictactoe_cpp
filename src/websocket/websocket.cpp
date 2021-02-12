@@ -99,7 +99,7 @@ void on_message(server *s, websocketpp::connection_hdl hdl,
     std::string response = id + ";id;";
     std::clog << "Sent " << response << '\n';
     s->send(hdl, response, msg->get_opcode());
-    pool.insert({id, {id, hdl, std::shared_ptr<Game>()}});
+    pool.insert({id, {id, "", hdl, std::shared_ptr<Game>()}});
   } else if (query == "disconnect") {
     pool.erase(identifier);
   } else if (query == "play_with") {
@@ -108,6 +108,12 @@ void on_message(server *s, websocketpp::connection_hdl hdl,
     on_play_on(s, hdl, msg);
   } else if (query == "game_ended") {
     end_game(s, identifier);
+  } else if (query == "set_username") {
+    pool[identifier].username = params;
+    std::clog << "Username of " << identifier << " is " << params << '\n';
+  } else if (query == "username_of") {
+    const std::string response = pool[params].username;
+    s->send(hdl, response, msg->get_opcode());
   } else {
     std::clog << "No idea what to do with query " << query << '\n';
   }

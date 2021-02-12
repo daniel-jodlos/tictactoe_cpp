@@ -10,6 +10,7 @@ typedef std::string Identifier;
 
 struct WebsocketClient {
   Identifier identifier;
+  std::string username;
   websocketpp::connection_hdl hdl;
   std::shared_ptr<Game> game;
   Identifier playsWith;
