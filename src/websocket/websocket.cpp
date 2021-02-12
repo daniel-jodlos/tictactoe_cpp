@@ -14,9 +14,10 @@ using websocketpp::lib::bind;
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
 
-unsigned int counter = 0;
+unsigned int counter = 1;
 
 std::string getID() {
+  std::clog << "PID:" << getpid() << " Counter:" << counter << '\n';
   std::srand(counter++);
   const size_t len = 10;
   std::string result = "";
@@ -40,30 +41,40 @@ std::tuple<std::string, std::string, std::string> parse(std::string payload) {
 
 std::shared_ptr<Game>
 createWebsocketGameObject(websocketpp::server<websocketpp::config::asio> *s,
-                          websocketpp::connection_hdl hdlA,
-                          websocketpp::connection_hdl hdlB, Board &b) {
+                          Identifier playerA, Identifier playerB, Board &b) {
   Element elems[] = {X, O};
+  const websocketpp::connection_hdl hdlA = pool[playerA].hdl,
+                                    hdlB = pool[playerB].hdl;
   const int start = rand() % 2;
   return std::make_shared<Game>(
-      (Player *)new WebsocketPlayer(s, hdlA, elems[start], b),
-      (Player *)new WebsocketPlayer(s, hdlB, elems[(start + 1) % 2], b), b);
+      (Player *)new WebsocketPlayer(s, hdlA, elems[start], b,
+                                    pool[playerB].username),
+      (Player *)new WebsocketPlayer(s, hdlB, elems[(start + 1) % 2], b,
+                                    pool[playerA].username),
+      b);
 }
 
 void create_game(Identifier playerA, Identifier playerB, server *s) {
-  s->send(pool[playerA].hdl, playerB + ";play_with;",
-          websocketpp::frame::opcode::CONTINUATION);
-  std::thread t([&]() {
-    websocketpp::connection_hdl hdlA = pool[playerA].hdl;
-    websocketpp::connection_hdl hdlB = pool[playerB].hdl;
-    Board b(3);
-    std::shared_ptr<Game> g = createWebsocketGameObject(s, hdlA, hdlB, b);
-    g->setHasFrontend(false);
-    pool[playerA].game = g;
-    pool[playerA].playsWith = playerB;
-    pool[playerB].game = g;
-    pool[playerB].playsWith = playerA;
-    g->resolve();
-  });
+  std::thread t(
+      [&](server *s, Identifier playerA, Identifier playerB) {
+        std::clog << "Strating the thread\n";
+        websocketpp::connection_hdl hdlA = pool[playerA].hdl;
+        websocketpp::connection_hdl hdlB = pool[playerB].hdl;
+        Board b(3);
+        std::clog << "Created all of the shit\n";
+        s->send(pool[playerA].hdl, ";play_with;" + playerB,
+                websocketpp::frame::opcode::text);
+        std::clog << "Update sent\n";
+        std::shared_ptr<Game> g =
+            createWebsocketGameObject(s, playerA, playerB, b);
+        g->setHasFrontend(false);
+        pool[playerA].game = g;
+        pool[playerA].playsWith = playerB;
+        pool[playerB].game = g;
+        pool[playerB].playsWith = playerA;
+        g->resolve();
+      },
+      s, playerA, playerB);
   t.detach();
 }
 
@@ -115,7 +126,7 @@ void on_message(server *s, websocketpp::connection_hdl hdl,
     std::clog << "Username of " << identifier << " is " << params << '\n';
   } else if (query == "username_of") {
     const std::string response = pool[params].username;
-    s->send(hdl, response, msg->get_opcode());
+    s->send(hdl, "0;username_of;" + response, msg->get_opcode());
   } else {
     std::clog << "No idea what to do with query " << query << '\n';
   }

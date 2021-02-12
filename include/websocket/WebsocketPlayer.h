@@ -2,6 +2,7 @@
 #define WebsocketPlayer_h
 
 #include "../player.h"
+#include <websocket/blocking_queue.h>
 #include <websocketpp/config/asio_no_tls.hpp>
 #include <websocketpp/server.hpp>
 
@@ -12,9 +13,14 @@ private:
   websocketpp::connection_hdl hdl;
   char id;
 
+  BlockingQueue<std::pair<std::size_t, std::size_t>> _queue;
+
+  void _send_game_info(std::string &) noexcept;
+
 public:
   WebsocketPlayer(websocketpp::server<websocketpp::config::asio> *,
-                  websocketpp::connection_hdl, Element, const Board &);
+                  websocketpp::connection_hdl, Element, const Board &,
+                  std::string);
 
   /**
    * Receives move of the remote opponent
