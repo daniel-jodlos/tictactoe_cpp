@@ -38,6 +38,10 @@ public:
                       Element element) override;
 
   void sendMove(std::pair<std::size_t, std::size_t>) noexcept;
+
+  void onFinish(Element result) const;
+
+  void onError(std::string error) const noexcept;
 };
 
 #endif

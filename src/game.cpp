@@ -3,9 +3,11 @@
 //
 
 #include "game_screen.h"
+#include <chrono>
 #include <game.h>
 #include <iostream>
 #include <stdexcept>
+#include <thread>
 
 Game::Game(Player *p1, Player *p2, Board &board) : _board(board), _round(0) {
   _players[0] = p1;
@@ -69,6 +71,8 @@ void Game::resolve() {
   const Element winner = _board.getWinner();
   for (const auto &player : _players)
     player->onFinish(winner);
+
+  std::clog << "Game finished\n";
 }
 
 Player *Game::getPlayer(int i) { return _players[i % 2]; }
