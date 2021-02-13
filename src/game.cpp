@@ -71,4 +71,4 @@ void Game::resolve() {
     player->onFinish(winner);
 }
 
-Player *Game::getPlayer(int i) { return _players[i]; }
+Player *Game::getPlayer(int i) { return _players[i % 2]; }

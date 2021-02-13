@@ -18,7 +18,7 @@ public:
 
 template <typename T> void BlockingQueue<T>::push(T &t) noexcept {
   {
-    std::lock_guard<std::mutex> lock(guard);
+    std::unique_lock<std::mutex> lock(guard);
     _data.push_back(t);
     std::clog << "Pushed to queue\n";
   }
@@ -27,7 +27,9 @@ template <typename T> void BlockingQueue<T>::push(T &t) noexcept {
 }
 
 template <typename T> T BlockingQueue<T>::pop() noexcept {
+  std::clog << "Pop called, trying to acquire lock\n";
   std::unique_lock<std::mutex> lock(guard);
+  std::clog << "Lock acquired\n";
   while (_data.empty()) {
     variable.wait(lock);
   }
