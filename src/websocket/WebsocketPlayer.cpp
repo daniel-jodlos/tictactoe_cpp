@@ -37,7 +37,7 @@ void WebsocketPlayer::onFinish(Element result) const {
     wssend(";finished;" + status);
     std::clog << "Sent status " << status << '\n';
   };
-  if (result == O) {
+  if (result == Empty) {
     upload("drew");
   } else if (result == getPlaysWith()) {
     upload("won");
